@@ -1,0 +1,197 @@
+{
+  "name": "Simple Lead Capturer",
+  "nodes": [
+    {
+      "parameters": {
+        "formId": "QKkD5p"
+      },
+      "type": "n8n-nodes-tallyforms.tallyTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "22f121f1-5781-4738-9652-241871356e16",
+      "name": "Tally Trigger",
+      "webhookId": "ab17e7f9-7070-4716-9761-0f12fbb7c6d3",
+      "credentials": {
+        "tallyApi": {
+          "id": "r7zaSMn4QFzWSsbx",
+          "name": "Tally account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3ab179f1-f23e-4bce-b57e-c207cc918095",
+              "name": "Name",
+              "value": "={{ $json.question_zeBrM1.value }}",
+              "type": "string"
+            },
+            {
+              "id": "6db4b9a9-3930-400a-9c39-8bd7d175c750",
+              "name": "Email",
+              "value": "={{ $json.question_520G9M.value }}",
+              "type": "string"
+            },
+            {
+              "id": "c993ad6e-28e2-4978-9bf6-c70aa0dd13f8",
+              "name": "Phone Number",
+              "value": "={{ $json.question_dPGD0z.value }}",
+              "type": "string"
+            },
+            {
+              "id": "25b9428c-8ea5-43cf-8d04-4e53c17c35ba",
+              "name": "Fitness Goal",
+              "value": "={{ $json.question_YdBMGq.value }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2b2a2865-6229-4c6b-a0f3-45cb9f64cd17",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "12UnXb42WkOOof4aWAP4KRSYA64UO7uGnNfnSLCOUxes",
+          "mode": "list",
+          "cachedResultName": "Fitness Gym Lead Capturer ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12UnXb42WkOOof4aWAP4KRSYA64UO7uGnNfnSLCOUxes/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12UnXb42WkOOof4aWAP4KRSYA64UO7uGnNfnSLCOUxes/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Full Name": "={{ $json.Name }}",
+            "Email": "={{ $json.Email }}",
+            "Phone Number": "={{ $json['Phone Number'] }}",
+            "Fitness goal": "={{ $json['Fitness Goal'] }}"
+          },
+          "matchingColumns": [
+            "Full Name"
+          ],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fitness goal",
+              "displayName": "Fitness goal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4b2b2dc1-a6cd-4ecc-8672-89ece0273e4e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tally Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f4fe9a8a-7fb0-4205-8d3f-5af02950ce57",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "lTHRxFmg9fQjbjBv",
+  "tags": [
+    {
+      "updatedAt": "2026-05-30T11:09:10.666Z",
+      "createdAt": "2026-05-30T11:09:10.666Z",
+      "id": "co1hVMF50UtB5njS",
+      "name": "Beginner"
+    }
+  ]
+}
