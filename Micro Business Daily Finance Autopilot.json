@@ -1,0 +1,529 @@
+{
+  "name": "Micro Business Daily Finance Autopilot",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f3ab735-212f-4f9c-b553-f753fd3a7f13",
+              "name": "date",
+              "value": "={{ $json.Date }}",
+              "type": "string"
+            },
+            {
+              "id": "b4c45602-bcdc-492b-af3e-86e16160aaaa",
+              "name": "sales",
+              "value": "={{ $json[\"Total Sales Today\"] }}",
+              "type": "number"
+            },
+            {
+              "id": "9e247969-ca26-47ff-bff4-ac18b24a720a",
+              "name": "expenses",
+              "value": "={{ $json.Expenses }}",
+              "type": "number"
+            },
+            {
+              "id": "ac6b5ae1-a12b-4b5d-b62a-6d64140ba732",
+              "name": "notes",
+              "value": "={{ $json[\"Notes (Optional)\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "483f94c0-77b7-4ed9-bdd1-d8783172fa8e",
+              "name": "Timestamp",
+              "value": "={{ $json.Timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "1b4196df-a447-4657-a40c-eef0b87de79c",
+              "name": "reported",
+              "value": "={{ $json.reported }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -64
+      ],
+      "id": "9915ed86-a98f-4551-a6a9-e43179f4bb76",
+      "name": "Clean / Type Conversion"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk",
+          "mode": "list",
+          "cachedResultName": "Micro Business Daily Finance Autopilot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1046727948,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk/edit#gid=1046727948"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        32
+      ],
+      "id": "51c8c8ea-de05-488b-b027-e816da61e936",
+      "name": "Trigger",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "losUHZTiHiaFA1dd",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst sales = Number(item.sales) || 0;\nconst expenses = Number(item.expenses) || 0;\nconst materials_alloc = Math.round(sales * 0.15);\nconst savings_alloc = Math.round(sales * 0.10);\nconst emergency_alloc = Math.round(sales * 0.05);\nconst net_profit = sales - expenses - materials_alloc - savings_alloc - emergency_alloc;\nconst status = net_profit >= 0 ? \"Normal\" : \"Loss\";\nconst statusColor = status === \"Normal\" ? \"#166534\" : \"#991b1b\";\nconst statusBg = status === \"Normal\" ? \"#dcfce7\" : \"#fee2e2\";\nreturn [\n  {\n    json: {\n      ...item,\n      Materials: materials_alloc,\n      Savings: savings_alloc,\n      Emergency: emergency_alloc,\n      \"Net Profit\": net_profit,\n      Status: status,\n      statusColor,\n      statusBg,\n      Reported: item.reported\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -64
+      ],
+      "id": "050abdce-bf2a-47fb-ad0b-54bcf01a0636",
+      "name": "Calculation Engine"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk",
+          "mode": "list",
+          "cachedResultName": "Micro Business Daily Finance Autopilot",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1046727948,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1swMZjMC_hVbOspxPyZpxFagurqD0LAMtJAmEVy-qdNk/edit#gid=1046727948"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.Timestamp }}",
+            "reported": "Done",
+            "status": "={{ $json.Status }}",
+            "net_profit": "={{ $json[\"Net Profit\"] }}",
+            "emergency_alloc": "={{ $json.Emergency }}",
+            "savings_alloc": "={{ $json.Savings }}",
+            "materials_alloc": "={{ $json.Materials }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total Sales Today",
+              "displayName": "Total Sales Today",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Expenses",
+              "displayName": "Expenses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notes (Optional)",
+              "displayName": "Notes (Optional)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "materials_alloc",
+              "displayName": "materials_alloc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "savings_alloc",
+              "displayName": "savings_alloc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "emergency_alloc",
+              "displayName": "emergency_alloc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "net_profit",
+              "displayName": "net_profit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reported",
+              "displayName": "reported",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        -64
+      ],
+      "id": "aa4a8690-9f2d-428a-b478-3fe6dbbbe67e",
+      "name": "Write back to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1a3e6c7-05bb-44e9-aa85-468f624dc9b6",
+              "name": "Date",
+              "value": "={{ $('Calculation Engine').item.json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "96d1341e-2ee3-4155-91ae-b33c7b8febb3",
+              "name": "Sales",
+              "value": "={{ $('Calculation Engine').item.json.sales }}",
+              "type": "number"
+            },
+            {
+              "id": "311553b6-b33b-4f68-8aa6-980c5eb35a4e",
+              "name": "Expenses",
+              "value": "={{ $('Calculation Engine').item.json.expenses }}",
+              "type": "number"
+            },
+            {
+              "id": "051895ac-5306-425c-bcbd-fb1598e7f98f",
+              "name": "Materials",
+              "value": "={{ $json.materials_alloc }}",
+              "type": "number"
+            },
+            {
+              "id": "4adea3b8-414e-4d8e-8833-fb42add90fe7",
+              "name": "Savings",
+              "value": "={{ $json.savings_alloc }}",
+              "type": "number"
+            },
+            {
+              "id": "1b54b505-2c35-4b19-bf30-74b91506e036",
+              "name": "Emergency",
+              "value": "={{ $json.emergency_alloc }}",
+              "type": "number"
+            },
+            {
+              "id": "8983dbd5-de15-49c4-857f-d22cb4cd3fd2",
+              "name": "Net Profit",
+              "value": "={{ $json.net_profit }}",
+              "type": "number"
+            },
+            {
+              "id": "ba402c54-7d13-410b-b95f-c6fa819e4b0d",
+              "name": "Status",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        -64
+      ],
+      "id": "e13deaa0-3497-4efb-b501-ea88af8603be",
+      "name": "Format Message"
+    },
+    {
+      "parameters": {
+        "sendTo": "raizorain48@gmail.com",
+        "subject": "=Daily Finance Report - {{ $json.Date }}",
+        "message": "=<div style=\"font-family: Arial; padding: 20px; background: linear-gradient(135deg, #f5f5f5, #eef2ff);\">\n  <div style=\"max-width: 650px; margin: auto; background: white; padding: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);\">\n\n    <!-- HEADER -->\n    <div style=\"background: #111827; color: white; padding: 18px 22px;\">\n      <h2 style=\"margin: 0; font-size: 20px;\">📊 Daily Business Report</h2>\n      <p style=\"margin: 5px 0 0; opacity: 0.7;\">{{ $json.Date }}</p>\n    </div>\n\n    <!-- SUMMARY GRID -->\n    <div style=\"display: flex; justify-content: space-between; padding: 20px; gap: 10px;\">\n      <div style=\"flex:1; background:#f9fafb; padding:12px; border-radius:10px;\">\n        <p style=\"margin:0; font-size:12px; color:#6b7280;\">Sales</p>\n        <p style=\"margin:6px 0 0; font-size:18px; font-weight:bold;\">₱{{ $json.Sales }}</p>\n      </div>\n      <div style=\"flex:1; background:#f9fafb; padding:12px; border-radius:10px;\">\n        <p style=\"margin:0; font-size:12px; color:#6b7280;\">Expenses</p>\n        <p style=\"margin:6px 0 0; font-size:18px; font-weight:bold;\">₱{{ $json.Expenses }}</p>\n      </div>\n      <div style=\"flex:1; background:#f9fafb; padding:12px; border-radius:10px;\">\n        <p style=\"margin:0; font-size:12px; color:#6b7280;\">Net Profit</p>\n        <p style=\"margin:6px 0 0; font-size:18px; font-weight:bold;\">₱{{ $json[\"Net Profit\"] }}</p>\n      </div>\n    </div>\n\n    <!-- DIVIDER -->\n    <div style=\"height:1px; background:#e5e7eb;\"></div>\n\n    <!-- ALLOCATIONS -->\n    <div style=\"padding: 20px;\">\n      <h3 style=\"margin: 0 0 12px;\">📦 Allocations</h3>\n      <div style=\"background:#f9fafb; padding:12px; border-radius:10px; margin-bottom:8px;\">\n        Materials (15%): <b>₱{{ $json.Materials }}</b>\n      </div>\n      <div style=\"background:#f9fafb; padding:12px; border-radius:10px; margin-bottom:8px;\">\n        Savings (10%): <b>₱{{ $json.Savings }}</b>\n      </div>\n      <div style=\"background:#f9fafb; padding:12px; border-radius:10px;\">\n        Emergency (5%): <b>₱{{ $json.Emergency }}</b>\n      </div>\n    </div>\n\n    <!-- STATUS -->\n    <div style=\"padding: 20px; text-align:center; border-top:1px solid #eee;\">\n      <span style=\"\n        display:inline-block;\n        padding:10px 28px;\n        border-radius:999px;\n        font-weight:bold;\n        font-size:15px;\n        background: {{ $json.Status === 'Normal' ? '#dcfce7' : '#fee2e2' }};\n        color: {{ $json.Status === 'Normal' ? '#166534' : '#991b1b' }};\n      \">\n        {{ $json.Status }}\n      </span>\n    </div>\n\n  </div>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -64
+      ],
+      "id": "ce220b23-0143-4036-a7d8-90db99c7d250",
+      "name": "Send a message",
+      "webhookId": "61c1a829-1db7-4450-8e50-2ec5b9875aaf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zBFoE7CLDcbZgsxt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d728f0d3-02f4-4577-b4bb-7220a21883d8",
+              "leftValue": "={{ $json.Timestamp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "95b895e7-bc63-4280-9557-e19eee25a629",
+              "leftValue": "={{ $json.reported }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        32
+      ],
+      "id": "c999566a-8017-4a72-8a97-bbbeb8429d42",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        448,
+        128
+      ],
+      "id": "02a37d7c-ca1f-4600-ad73-73ac78079526",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean / Type Conversion": {
+      "main": [
+        [
+          {
+            "node": "Calculation Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculation Engine": {
+      "main": [
+        [
+          {
+            "node": "Write back to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write back to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Format Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Message": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Clean / Type Conversion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "timeSavedPerExecution": 1
+  },
+  "versionId": "6a014923-6a82-45fd-a606-654914b302df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "JkO3sl0Cp588tMYi",
+  "tags": [
+    {
+      "updatedAt": "2026-05-31T12:25:38.168Z",
+      "createdAt": "2026-05-31T12:25:38.168Z",
+      "id": "1UGPQFAvDzha4lTv",
+      "name": "Client Based"
+    },
+    {
+      "updatedAt": "2026-05-31T10:31:20.413Z",
+      "createdAt": "2026-05-31T10:31:20.413Z",
+      "id": "l4EJG3WIWOn7vkyJ",
+      "name": "E-commerce"
+    }
+  ]
+}

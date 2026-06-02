@@ -1,0 +1,239 @@
+{
+  "name": "Instant SMS Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "19iHI-iFfUOf1-D3Azrqu6Hd-Xg_jLFmJgEB94M1TuHY",
+          "mode": "list",
+          "cachedResultName": "Plumber Job Request Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19iHI-iFfUOf1-D3Azrqu6Hd-Xg_jLFmJgEB94M1TuHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1212138129,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19iHI-iFfUOf1-D3Azrqu6Hd-Xg_jLFmJgEB94M1TuHY/edit#gid=1212138129"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "97b1306a-2e61-4709-86a5-48cdbc900eb6",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "losUHZTiHiaFA1dd",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "29dc21bb-06ed-4799-9939-6418256a128f",
+              "name": "Full Name",
+              "value": "={{ $json['Full Name (First Name | Last Name)'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7efef52c-48a5-4d1c-8b39-5f525d47c3a5",
+              "name": "Phone Number",
+              "value": "={{ $json[\"Phone Number\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "240346d6-a6ab-4636-b7f1-057ef1c61389",
+              "name": "Address",
+              "value": "={{ $json.Address }}",
+              "type": "string"
+            },
+            {
+              "id": "05f4548e-4545-4ba7-a373-8126ef94934f",
+              "name": "Type of Job",
+              "value": "={{ $json['Type of job'] }}",
+              "type": "string"
+            },
+            {
+              "id": "12116f88-f63e-4a97-8e0c-d1824188e6b7",
+              "name": "=Timestamp",
+              "value": "={{ new Date((($json[\"Timestamp\"] - 25569) * 86400 * 1000)).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) }}",
+              "type": "string"
+            },
+            {
+              "id": "3e98c2fb-03f2-4fd0-a880-1c33af6cae49",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "efca23c4-1357-42f7-92f1-47f54cb16045",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "81fc8d80-a8bd-43a9-a768-c7c03e3e8713",
+              "leftValue": "={{ $json[\"Phone Number\"] }}",
+              "rightValue": "none",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "650700bb-e8c9-4ba9-a19f-89efdd428191",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=Name: {{ $('Edit Fields').item.json['Full Name'] }}\n\nFound no Phone Number. Reach him out!\n\nGmail: {{ $json.Email }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        96
+      ],
+      "id": "b7d3d7cd-2751-4467-8788-00f5c08e2cb3",
+      "name": "Send a text message",
+      "webhookId": "97d244c3-5a05-4478-a257-5e5b6855d522",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "=+14155238886",
+        "to": "+639923848668",
+        "toWhatsapp": true,
+        "message": "=New Job Request: {{ $json[\"Type of Job\"] }}\n\nName: {{ $json[\"Full Name\"] }}\nAddress: {{ $json.Address }}\nPhone Number: {{ $json[\"Phone Number\"] }}\nSubmitted: {{ new Date($json[\"Timestamp\"]).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "f984e5cc-2306-443e-9ea5-57b1af724506",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "DpobuwRRfw47AqKg",
+          "name": "Twilio account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5bf661fa-4817-4cd9-92e1-6fc83bcf0537",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "1VNLr7thNlAVXMyS",
+  "tags": [
+    {
+      "updatedAt": "2026-05-30T11:09:10.666Z",
+      "createdAt": "2026-05-30T11:09:10.666Z",
+      "id": "co1hVMF50UtB5njS",
+      "name": "Beginner"
+    }
+  ]
+}

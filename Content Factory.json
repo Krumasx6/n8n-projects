@@ -1,0 +1,886 @@
+{
+  "name": "Content Factory",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "11302eeb-6ab1-4cff-8b9a-e74f3315e054",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1CsQ2VKxMzYyo6CHTgW-7Q2mfU4jgOPUm",
+            "mode": "list",
+            "cachedResultName": "Portfolio Content Factory",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1CsQ2VKxMzYyo6CHTgW-7Q2mfU4jgOPUm"
+          }
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        -112
+      ],
+      "id": "ca6ec7c6-5e85-4291-991e-964c3db9df27",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e9EQmyswTnZbSjY5",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY",
+          "mode": "list",
+          "cachedResultName": "Portfolio Content Factory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Done",
+            "ID": "={{ $json.id }}",
+            "Name": "={{ $json.name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Portfolio Angle",
+              "displayName": "Portfolio Angle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "478e3aea-1e9a-4081-a80a-b2b6b1d882b8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "761629fd-6865-4363-8f05-4bdf121dc8fb",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "={{ $json.status }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "79c970b7-be50-4764-9107-9576b3e21765",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1344,
+        -112
+      ],
+      "id": "4d273a31-6dcd-4c00-8193-251945044d57",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ee0b756-3798-4918-8689-994192d4d1d5",
+              "name": "name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "40e56bb2-2772-4a16-a41a-4357122d40ec",
+              "name": "status",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "ac1743b9-1302-45c5-8bfe-c4abef507568",
+              "name": "id",
+              "value": "={{ $json.ID }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        -112
+      ],
+      "id": "73c08b95-e0ce-4132-9c8c-72b707f7937a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY",
+          "mode": "list",
+          "cachedResultName": "Portfolio Content Factory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "=Done",
+            "Name": "={{ $json.name }}",
+            "ID": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Portfolio Angle",
+              "displayName": "Portfolio Angle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        128
+      ],
+      "id": "097a3349-211a-475f-979b-4a95220eed9a",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        0,
+        512
+      ],
+      "id": "4a4aebff-8e86-413d-b641-6aa1b32b1a4c",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        320
+      ],
+      "id": "458e55ba-1d43-48d4-96bc-711dcbe29c50",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "e9EQmyswTnZbSjY5",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        128
+      ],
+      "id": "ce45c881-2525-4a63-9133-7ebf57f5201a",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=File Name: {{ $('If').item.json.name }}\nFile ID: {{ $('If').item.json.id }}\nWorkflow to Audit:\n{{ $json.summary }}",
+        "options": {
+          "systemMessage": "=You are an advanced n8n workflow auditor and LinkedIn content strategist.\nYou will receive a structured summary of an n8n workflow including its name, node count, and logical step-by-step sequence.\n\n═══════════════════════════════════════\nSTEP 1: EVALUATE — Is this a Portfolio Angle?\n═══════════════════════════════════════\n\nA Portfolio Angle means the workflow solves a real, complex business problem that showcases advanced automation skills.\n\nMark as YES if the workflow has ANY of:\n- 4+ meaningful nodes with multi-step logic\n- Database operations (MySQL, PostgreSQL, Supabase, Airtable, etc.)\n- Financial, reporting, or scheduling automation\n- AI/LLM integration (AI Agent, OpenAI, Claude, Gemini, etc.)\n- Multi-system integration (e.g. Google Sheets + Gmail + Drive together)\n- Conditional logic (IF, Switch, Filter, Router)\n- Data transformation pipelines\n- CRM, e-commerce, or operational workflows\n\nMark as NO if the workflow is:\n- A simple 1-3 node demo or tutorial\n- A basic trigger → single action (e.g. Manual → TOTP, Webhook → Slack)\n- A test or proof-of-concept with no real business value\n\n═══════════════════════════════════════\nSTEP 2: IF YES — Generate Portfolio Content\n═══════════════════════════════════════\n\nGenerate the following:\n\n1. WORKING TITLE\n   - Professional, specific, LinkedIn-ready\n   - Example: \"Automated Daily Financial Report Pipeline with Google Sheets & Gmail\"\n\n2. DESCRIPTION (3-4 sentences)\n   - What problem does it solve?\n   - What is the tech stack / tools used?\n   - What is the business impact?\n   - Write it as if posting on LinkedIn to impress hiring managers or clients.\n\n3. IMAGE DESCRIPTION\n   - Describe a specific image or visual to accompany the LinkedIn post\n   - No image will be generated — just describe what to use\n   - Example: \"A clean screenshot of the n8n workflow canvas showing the full node sequence, with a Google Sheets icon and Gmail icon visible\"\n\n═══════════════════════════════════════\nSTEP 3: IF NO — Log and Move On\n═══════════════════════════════════════\n\nSet title, description, and image to \"N/A\".\n\n═══════════════════════════════════════\nIMPORTANT RULES\n═══════════════════════════════════════\n- Never guess or hallucinate node functionality beyond what the sequence shows\n- Base your judgment ONLY on the logical sequence provided\n- Be strict — not every workflow is portfolio-worthy\n- Do NOT call any tool — just return the JSON output below\n\n═══════════════════════════════════════\nOUTPUT FORMAT — CRITICAL\n═══════════════════════════════════════\n\nYou must respond ONLY with a valid JSON object.\nNo markdown, no explanation, no extra text before or after.\nNo code fences, no backticks, no \"```json\".\nJust the raw JSON object, exactly this structure:\n\n{\n  \"portfolio_angle\": \"Yes\" or \"No\",\n  \"title\": \"Working Title here\" or \"N/A\",\n  \"description\": \"Description here\" or \"N/A\",\n  \"image\": \"Image description here\" or \"N/A\",\n  \"reasoning\": \"One sentence explanation of your decision\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        320,
+        368
+      ],
+      "id": "27e38338-ee18-42f2-9872-261a00dcfb70",
+      "name": "AI Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        528
+      ],
+      "id": "e642a9c8-7d14-4cf2-8a73-0c7f2a341a51",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "KypaMl0jqxP6WOWp",
+          "name": "Google Gemini(PaLM) Api account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const workflow = $json.data;\n\n// ─── Node type → readable name map ───────────────────────────────────────────\nconst typeMap = {\n  \"n8n-nodes-base.manualTrigger\": \"Manual Trigger\",\n  \"n8n-nodes-base.scheduleTrigger\": \"Schedule / Cron Trigger\",\n  \"n8n-nodes-base.webhook\": \"Webhook Trigger\",\n  \"n8n-nodes-base.gmail\": \"Gmail\",\n  \"n8n-nodes-base.googleSheets\": \"Google Sheets\",\n  \"n8n-nodes-base.googleDrive\": \"Google Drive\",\n  \"n8n-nodes-base.httpRequest\": \"HTTP Request\",\n  \"n8n-nodes-base.code\": \"Code (JavaScript)\",\n  \"n8n-nodes-base.if\": \"IF Condition\",\n  \"n8n-nodes-base.switch\": \"Switch / Router\",\n  \"n8n-nodes-base.set\": \"Set Fields\",\n  \"n8n-nodes-base.merge\": \"Merge\",\n  \"n8n-nodes-base.splitInBatches\": \"Split In Batches\",\n  \"n8n-nodes-base.wait\": \"Wait\",\n  \"n8n-nodes-base.noOp\": \"No Operation (Pass-through)\",\n  \"n8n-nodes-base.stopAndError\": \"Stop & Error\",\n  \"n8n-nodes-base.slack\": \"Slack\",\n  \"n8n-nodes-base.telegram\": \"Telegram\",\n  \"n8n-nodes-base.discord\": \"Discord\",\n  \"n8n-nodes-base.notion\": \"Notion\",\n  \"n8n-nodes-base.airtable\": \"Airtable\",\n  \"n8n-nodes-base.mysql\": \"MySQL\",\n  \"n8n-nodes-base.postgres\": \"PostgreSQL\",\n  \"n8n-nodes-base.mongodb\": \"MongoDB\",\n  \"n8n-nodes-base.redis\": \"Redis\",\n  \"n8n-nodes-base.supabase\": \"Supabase\",\n  \"n8n-nodes-base.totp\": \"TOTP (Auth Code)\",\n  \"n8n-nodes-base.crypto\": \"Crypto\",\n  \"n8n-nodes-base.dateTime\": \"Date & Time\",\n  \"n8n-nodes-base.function\": \"Function (Legacy)\",\n  \"n8n-nodes-base.functionItem\": \"Function Item (Legacy)\",\n  \"n8n-nodes-base.itemLists\": \"Item Lists\",\n  \"n8n-nodes-base.readBinaryFile\": \"Read Binary File\",\n  \"n8n-nodes-base.writeBinaryFile\": \"Write Binary File\",\n  \"n8n-nodes-base.extractFromFile\": \"Extract From File\",\n  \"n8n-nodes-base.convertToFile\": \"Convert To File\",\n  \"n8n-nodes-base.compression\": \"Compression\",\n  \"n8n-nodes-base.emailSend\": \"Send Email (SMTP)\",\n  \"n8n-nodes-base.emailReadImap\": \"Read Email (IMAP)\",\n  \"n8n-nodes-base.hubspot\": \"HubSpot\",\n  \"n8n-nodes-base.salesforce\": \"Salesforce\",\n  \"n8n-nodes-base.stripe\": \"Stripe\",\n  \"n8n-nodes-base.paypal\": \"PayPal\",\n  \"n8n-nodes-base.shopify\": \"Shopify\",\n  \"n8n-nodes-base.wooCommerce\": \"WooCommerce\",\n  \"n8n-nodes-base.wordpress\": \"WordPress\",\n  \"n8n-nodes-base.typeform\": \"Typeform\",\n  \"n8n-nodes-base.jotForm\": \"JotForm\",\n  \"n8n-nodes-base.trello\": \"Trello\",\n  \"n8n-nodes-base.asana\": \"Asana\",\n  \"n8n-nodes-base.jira\": \"Jira\",\n  \"n8n-nodes-base.github\": \"GitHub\",\n  \"n8n-nodes-base.gitlab\": \"GitLab\",\n  \"n8n-nodes-base.twitter\": \"Twitter / X\",\n  \"n8n-nodes-base.linkedIn\": \"LinkedIn\",\n  \"n8n-nodes-base.facebook\": \"Facebook\",\n  \"n8n-nodes-base.instagram\": \"Instagram\",\n  \"n8n-nodes-base.youtube\": \"YouTube\",\n  \"n8n-nodes-base.googleCalendar\": \"Google Calendar\",\n  \"n8n-nodes-base.googleContacts\": \"Google Contacts\",\n  \"n8n-nodes-base.microsoftOutlook\": \"Microsoft Outlook\",\n  \"n8n-nodes-base.microsoftTeams\": \"Microsoft Teams\",\n  \"n8n-nodes-base.microsoftExcel\": \"Microsoft Excel\",\n  \"n8n-nodes-base.microsoftOneDrive\": \"Microsoft OneDrive\",\n  \"n8n-nodes-base.dropbox\": \"Dropbox\",\n  \"n8n-nodes-base.box\": \"Box\",\n  \"n8n-nodes-base.ftp\": \"FTP\",\n  \"n8n-nodes-base.ssh\": \"SSH\",\n  \"n8n-nodes-base.executeCommand\": \"Execute Command\",\n  \"n8n-nodes-base.executeWorkflow\": \"Execute Sub-Workflow\",\n  \"n8n-nodes-base.respondToWebhook\": \"Respond to Webhook\",\n  \"n8n-nodes-base.stickyNote\": \"Sticky Note\",\n  \"n8n-nodes-base.filter\": \"Filter\",\n  \"n8n-nodes-base.summarize\": \"Summarize\",\n  \"n8n-nodes-base.aggregate\": \"Aggregate\",\n  \"n8n-nodes-base.removeDuplicates\": \"Remove Duplicates\",\n  \"n8n-nodes-base.limit\": \"Limit\",\n  \"n8n-nodes-base.sort\": \"Sort\",\n  \"n8n-nodes-base.rename\": \"Rename Keys\",\n  \"n8n-nodes-base.splitOut\": \"Split Out\",\n  \"n8n-nodes-base.openAi\": \"OpenAI\",\n  \"n8n-nodes-base.anthropic\": \"Anthropic / Claude\",\n  \"@n8n/n8n-nodes-langchain.agent\": \"AI Agent\",\n  \"@n8n/n8n-nodes-langchain.lmChatOpenAi\": \"LLM: OpenAI Chat\",\n  \"@n8n/n8n-nodes-langchain.lmChatAnthropic\": \"LLM: Anthropic Claude\",\n  \"@n8n/n8n-nodes-langchain.lmChatGoogleGemini\": \"LLM: Google Gemini\",\n  \"@n8n/n8n-nodes-langchain.lmChatMistralCloud\": \"LLM: Mistral\",\n  \"@n8n/n8n-nodes-langchain.toolGoogleSheets\": \"Tool: Google Sheets\",\n  \"@n8n/n8n-nodes-langchain.toolGoogleDrive\": \"Tool: Google Drive\",\n  \"@n8n/n8n-nodes-langchain.toolGmail\": \"Tool: Gmail\",\n  \"@n8n/n8n-nodes-langchain.toolCode\": \"Tool: Code\",\n  \"@n8n/n8n-nodes-langchain.toolHttpRequest\": \"Tool: HTTP Request\",\n  \"@n8n/n8n-nodes-langchain.toolWorkflow\": \"Tool: Sub-Workflow\",\n  \"@n8n/n8n-nodes-langchain.memoryBufferWindow\": \"Memory: Buffer Window\",\n  \"@n8n/n8n-nodes-langchain.memoryPostgresChat\": \"Memory: PostgreSQL\",\n  \"@n8n/n8n-nodes-langchain.outputParserStructured\": \"Output Parser: Structured\",\n  \"@n8n/n8n-nodes-langchain.chainLlm\": \"LLM Chain\",\n  \"@n8n/n8n-nodes-langchain.chainSummarization\": \"Summarization Chain\",\n  \"@n8n/n8n-nodes-langchain.embeddingsOpenAi\": \"Embeddings: OpenAI\",\n  \"@n8n/n8n-nodes-langchain.vectorStoreInMemory\": \"Vector Store: In-Memory\",\n  \"@n8n/n8n-nodes-langchain.vectorStorePinecone\": \"Vector Store: Pinecone\",\n  \"@n8n/n8n-nodes-langchain.documentDefaultDataLoader\": \"Document Loader\",\n  \"@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter\": \"Text Splitter\",\n};\n\nfunction getReadableName(type, displayName) {\n  return typeMap[type] || displayName || type;\n}\n\n// ─── Walk connections to build ordered sequence ───────────────────────────────\nconst nodes = workflow.nodes;\nconst connections = workflow.connections || {};\n\n// Build a lookup: node name → node object\nconst nodeByName = {};\nfor (const node of nodes) {\n  nodeByName[node.name] = node;\n}\n\n// Find all nodes that are pointed TO (they have incoming connections)\nconst hasIncoming = new Set();\nfor (const [, outputs] of Object.entries(connections)) {\n  for (const portGroup of Object.values(outputs)) {\n    for (const targets of portGroup) {\n      for (const target of targets) {\n        hasIncoming.add(target.node);\n      }\n    }\n  }\n}\n\n// Root nodes = nodes with NO incoming connections (triggers)\nconst roots = nodes.filter(n => !hasIncoming.has(n.name));\n\n// BFS walk from each root to build the sequence\nconst visited = new Set();\nconst sequence = [];\n\nfunction walk(nodeName) {\n  if (visited.has(nodeName)) return;\n  visited.add(nodeName);\n\n  const node = nodeByName[nodeName];\n  if (!node) return;\n\n  // Skip sticky notes\n  if (node.type === \"n8n-nodes-base.stickyNote\") return;\n\n  sequence.push({\n    name: node.name,\n    readable: getReadableName(node.type, node.name),\n    type: node.type,\n  });\n\n  // Follow connections\n  const outgoing = connections[nodeName];\n  if (!outgoing) return;\n\n  for (const portGroup of Object.values(outgoing)) {\n    for (const targets of portGroup) {\n      for (const target of targets) {\n        walk(target.node);\n      }\n    }\n  }\n}\n\nfor (const root of roots) {\n  walk(root.name);\n}\n\n// ─── Build readable text output ───────────────────────────────────────────────\nconst sequenceText = sequence\n  .map((n, i) => `  Step ${i + 1}: ${n.readable} (\"${n.name}\")`)\n  .join(\"\\n\");\n\nconst flowArrow = sequence.map(n => n.readable).join(\" → \");\n\nconst summary = `Workflow: \"${workflow.name}\"\nTotal Nodes: ${nodes.filter(n => n.type !== \"n8n-nodes-base.stickyNote\").length}\n\nLogical Sequence:\n${sequenceText}\n\nFlow Overview:\n  ${flowArrow}`;\n\nreturn { json: { summary } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        128
+      ],
+      "id": "0a3b7cd7-beef-4a7f-ae82-08420a6e55da",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "387ee4b4-63c1-4341-a4a1-9aa587adfae0",
+              "name": "portfolio angle",
+              "value": "={{ JSON.parse($json.output).portfolio_angle }}",
+              "type": "string"
+            },
+            {
+              "id": "ace6e075-941c-453e-8677-0fe641b42165",
+              "name": "title",
+              "value": "={{ JSON.parse($json.output).title }}",
+              "type": "string"
+            },
+            {
+              "id": "6484e8d8-ca8f-49b3-b72d-a7e05352d192",
+              "name": "description",
+              "value": "={{ JSON.parse($json.output).description }}",
+              "type": "string"
+            },
+            {
+              "id": "fa2a0c33-8689-4566-a2b7-7a57b3383d81",
+              "name": "image",
+              "value": "={{ JSON.parse($json.output).image }}",
+              "type": "string"
+            },
+            {
+              "id": "0bb0ecd1-2a7e-4c15-90fc-a44b169c7d35",
+              "name": "reasoning",
+              "value": "={{ JSON.parse($json.output).reasoning }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        176
+      ],
+      "id": "05f336ed-29d0-444b-8361-2f1ed8e843cf",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY",
+          "mode": "list",
+          "cachedResultName": "Portfolio Content Factory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('If').item.json.name }}",
+            "Portfolio Angle": "={{ $json[\"portfolio angle\"] }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Portfolio Angle",
+              "displayName": "Portfolio Angle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        160
+      ],
+      "id": "9258b8f2-5dd5-47f6-b9db-1b8ee4628280",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "897b544d-7c50-4c66-b1d9-8958c234a052",
+              "leftValue": "={{ $json[\"Portfolio Angle\"] }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        480
+      ],
+      "id": "cbfe7c53-ca6f-4b04-b04e-0e55c0b42669",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=🔴 *Not a Portfolio Angle*\n\n📁 *File:* {{ $('If').item.json.name }}\n\n💡 *Reasoning:* {{ $('Edit Fields1').item.json.reasoning }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        496
+      ],
+      "id": "27f72219-43db-40fa-bc8f-28002d1e34f4",
+      "name": "Send a text message",
+      "webhookId": "2b9164d9-8c35-47b0-a9fa-81356822c44c",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=🟢 *Portfolio Angle Found!*\n\n📁 *File:* {{ $('If').item.json.name }}\n\n🏷️ *Title:* {{ $('Edit Fields1').item.json.title }}\n\n📝 *Description:* {{ $('Edit Fields1').item.json.description }}\n\n🖼️ *Image:* {{ $('Edit Fields1').item.json.image }}\n\n💡 *Reasoning:* {{ $('Edit Fields1').item.json.reasoning }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        256
+      ],
+      "id": "fb8751e0-1bf0-4f3e-a1aa-3e33c4b9b58f",
+      "name": "Send a text message1",
+      "webhookId": "0a7495be-1af4-421b-94d8-6792a4b9051b",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY",
+          "mode": "list",
+          "cachedResultName": "Portfolio Content Factory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IH51fPjw_3E9LOxIfdq4KDJUWcVYYQ1CPQ4bO11YeHY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "07041602-bce7-4efd-bc91-e7d3c4c484f5",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all files from Google Drive\nconst driveFiles = $('Search files and folders').all().map(i => i.json);\n\n// Get all rows from Google Sheet\nconst sheetRows = $('Get row(s) in sheet').all().map(i => i.json);\n\n// Get all names already in the sheet\nconst sheetNames = sheetRows.map(r => r.Name);\n\n// Filter: only return Drive files NOT yet in the sheet\nconst newFiles = driveFiles.filter(f => !sheetNames.includes(f.name));\n\n// If nothing new, return empty\nif (newFiles.length === 0) {\n  return [{ json: { message: \"No new files to process\" } }];\n}\n\nreturn newFiles.map(f => ({ json: f }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "025ff202-7d80-4a45-9208-c89fc08bb11b",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e91e37e2-e274-45c7-a254-7d99cad7810a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "bg3TirMNM4lOFPWp",
+  "tags": []
+}

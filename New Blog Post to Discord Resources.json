@@ -1,0 +1,615 @@
+{
+  "name": "New Blog Post to Discord Resources",
+  "nodes": [
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        64,
+        336
+      ],
+      "id": "dc361ba9-fd48-42e1-9c9d-d4bc3caa02e9",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        352
+      ],
+      "id": "3374f8de-e3c3-49c1-850a-e8cdcdb0a67b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://css-tricks.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        160
+      ],
+      "id": "c6827c95-9f49-45d0-85c5-c8a82df34058",
+      "name": "Css Tricks"
+    },
+    {
+      "parameters": {
+        "url": "https://www.smashingmagazine.com/feed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        352
+      ],
+      "id": "e96203b7-179e-4b1a-a745-34781d3003c2",
+      "name": "Smashing Magazines"
+    },
+    {
+      "parameters": {
+        "url": "https://dev.to/feed/tag/javascript",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -384,
+        544
+      ],
+      "id": "0b79aca4-167a-4510-b1e8-ce62beeb7042",
+      "name": "Dev.To (Javascript)"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        352
+      ],
+      "id": "43177c8b-b11e-4a72-aea1-07b2e11b83db",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc",
+          "mode": "list",
+          "cachedResultName": "New Blog Post to Discord Resources",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        960
+      ],
+      "id": "cdb96e76-a4fa-43a0-a5ac-e35aebd08bb6",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "losUHZTiHiaFA1dd",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        160
+      ],
+      "id": "87871f46-272a-4637-8522-66cd35213e58",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "maxItems": 2
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        544
+      ],
+      "id": "c51da0ae-5038-42f0-b4f1-6200951238d7",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc",
+          "mode": "list",
+          "cachedResultName": "New Blog Post to Discord Resources",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Creator": "={{ $('Merge').item.json.creator }}",
+            "URL": "={{ $json.link }}",
+            "Title": "={{ $json.title }}",
+            "Description": "={{ $json.description }}"
+          },
+          "matchingColumns": [
+            "Creator"
+          ],
+          "schema": [
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        512,
+        352
+      ],
+      "id": "4f878e20-9757-4bdf-a9dc-dedd5cc0293c",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Kunin ang lahat ng items na pumasok mula sa mga RSS feeds\nconst items = $input.all();\n\nlet totalRevenue = 0;\nlet totalOrders = 0;\nlet formattedArticles = [];\n\n// 2. I-loop ang bawat article para ayusin ang format\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i].json;\n  \n  // Hanapin kung saan nakatago ang description (contentSnippet o content:encoded)\n  // At linisin ang mga HTML tags gamit ang regex para hindi magulo sa Discord\n  let rawDescription = item.contentSnippet || item[\"content:encoded\"] || \"\";\n  let cleanDescription = rawDescription\n    .replace(/<[^>]*>/g, '') // Tinatanggal ang mga <h2>, <p>, <ul> tags\n    .substring(0, 150)       // Kumuha lang ng unang 150 characters para hindi masyadong mahaba\n    .trim() + \"...\";\n\n  // I-save ang malinis na data\n  formattedArticles.push({\n    title: item.title,\n    link: item.link,\n    description: cleanDescription,\n    source: item.link.includes(\"dev.to\") ? \"Dev.to\" : \"Smashing Magazine\"\n  });\n\n  // KUNWARING COMPUTATION (Kung may price data na kasama sa workflow mo)\n  if (item.Price) {\n    totalRevenue += Number(item.Price);\n    totalOrders++;\n  }\n}\n\n// 3. Ibalik ang malinis na listahan ng mga artikulo\nreturn formattedArticles.map(article => ({ json: article }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        352
+      ],
+      "id": "9aba1dee-69fc-4055-b414-ee9af9a04d68",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1510286668618530957",
+          "mode": "list",
+          "cachedResultName": "Testing's server",
+          "cachedResultUrl": "https://discord.com/channels/1510286668618530957"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1510286709999276082",
+          "mode": "list",
+          "cachedResultName": "resources",
+          "cachedResultUrl": "https://discord.com/channels/1510286668618530957/1510286709999276082"
+        },
+        "content": "=New Article: *{{ $json.Title }}* — *{{ $json.Description }}* — Read here: {{ $json.URL }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        768
+      ],
+      "id": "443052ca-77d5-4ed4-ab5e-ade84cd57be5",
+      "name": "Send a message",
+      "webhookId": "7349fc38-98ef-4015-a622-c3926e66e57e",
+      "credentials": {
+        "discordBotApi": {
+          "id": "ZPKjj5djBYsAVlq9",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc",
+          "mode": "list",
+          "cachedResultName": "New Blog Post to Discord Resources",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gyghYc9dybbHeOu1Wig29i2I9GYJmSATuLLocDgD6Qc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Creator": "={{ $json.Creator }}",
+            "Status": "Posted"
+          },
+          "matchingColumns": [
+            "Creator"
+          ],
+          "schema": [
+            {
+              "id": "Creator",
+              "displayName": "Creator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -160,
+        960
+      ],
+      "id": "1c62e211-61d0-47d1-a201-60d71c9eba78",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cc3beb11-dcdc-4821-b53c-1a0846f932da",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        960
+      ],
+      "id": "6a906c60-e4fc-4076-891f-2f2da2bd7090",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        1152
+      ],
+      "id": "794e7a44-4bf9-475a-9913-190002b1446a",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Css Tricks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Smashing Magazines",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Dev.To (Javascript)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Css Tricks": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Smashing Magazines": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dev.To (Javascript)": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2df35cd9-541b-4b8e-9642-a2774b8a6137",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "3PeH86R2QpVDEfOe",
+  "tags": [
+    {
+      "updatedAt": "2026-05-30T11:09:10.666Z",
+      "createdAt": "2026-05-30T11:09:10.666Z",
+      "id": "co1hVMF50UtB5njS",
+      "name": "Beginner"
+    }
+  ]
+}

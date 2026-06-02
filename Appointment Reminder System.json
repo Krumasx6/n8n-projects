@@ -1,0 +1,799 @@
+{
+  "name": "Appointment Reminder System",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk",
+          "mode": "list",
+          "cachedResultName": "Dr Reyes Appointment Reminder Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.payload.email }}",
+            "Name": "={{ $json.payload.name }}",
+            "Time": "={{ DateTime.fromISO($json.payload.scheduled_event.start_time).toFormat('LLL dd, yyyy - hh:mm a') }}",
+            "Status": "=Active"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reminded",
+              "displayName": "Reminded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        96
+      ],
+      "id": "b59804d4-242b-47ff-a7ff-9511aaa64315",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=Dr Reyes Dental Care Appointment! \n\nName:  {{ $json.Name }}\nEmail: {{ $json.Email }}\nDate and Time: {{ $json.Time }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "08bb8464-7fe0-4002-b84d-3ee120f3c03a",
+      "name": "Send a text message",
+      "webhookId": "5d4ec643-3a5c-4819-95c4-cd2d02683041",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $json.start_time }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        192
+      ],
+      "id": "9ad5e5fb-d016-4759-9a0c-00c59bddfe22",
+      "name": "Wait",
+      "webhookId": "b0e14d7a-72c1-4587-bf41-d70e19a63d48"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a161b7c3-5c53-4bba-bd6f-19058af0bdcc",
+              "name": "start_time",
+              "value": "={{ $node[\"Created\"].json.payload.scheduled_event.start_time }}",
+              "type": "string"
+            },
+            {
+              "id": "5c8a2ad5-2096-4b8f-bab5-554bd0727ace",
+              "name": "Name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "9b4d574a-8b9d-4b0b-91fd-d67b2b5a8a1e",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        192
+      ],
+      "id": "86dc118f-2979-4efb-8b94-1c3c4388d481",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.Email }}",
+        "subject": "Appointment Reminder: Dr. Reyes Dental Care",
+        "emailType": "text",
+        "message": "=Hi {{ $json.Name }}!\n\nThis is a friendly reminder regarding your upcoming dental check-up at Dr. Reyes Dental Care.\n\nWe have you scheduled for:\n📅 Date & Time: {{ DateTime.fromISO($json.start_time).toFormat('cccc, LLL dd, yyyy') }} at {{ DateTime.fromISO($json.start_time).toFormat('hh:mm a') }}\n📍 Location: Dr. Reyes St.\n\nPlease arrive 5 minutes early and remember to bring your PhilHealth ID if applicable.\n\nIf you need to reschedule or have any questions, you can manage your booking here: [Insert Calendly Link]\n\nWe look forward to seeing you soon!\n\nBest regards,\nDr. Reyes Dental Care",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        192
+      ],
+      "id": "792177d2-35d8-49ba-bc4a-96d98a300a79",
+      "name": "Send a message",
+      "webhookId": "423bd445-3848-41df-8b74-992926fab409",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zBFoE7CLDcbZgsxt",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "invitee.created"
+        ]
+      },
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ],
+      "id": "cd9da9ba-54f2-474c-a07b-e643bbf9f023",
+      "name": "Created",
+      "webhookId": "5f12e520-1f9f-438c-983e-5d3d29e117fe",
+      "credentials": {
+        "calendlyApi": {
+          "id": "rSpYGfRALFzVcCYB",
+          "name": "Calendly account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "events": [
+          "invitee.canceled"
+        ]
+      },
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        416
+      ],
+      "id": "c2f10a0a-bb96-4013-9848-f63191a32fde",
+      "name": "Cancelled",
+      "webhookId": "3f7635b1-f32a-4ce2-91ca-e27c1ecd4150",
+      "credentials": {
+        "calendlyApi": {
+          "id": "rSpYGfRALFzVcCYB",
+          "name": "Calendly account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk",
+          "mode": "list",
+          "cachedResultName": "Dr Reyes Appointment Reminder Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $json.payload.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        416
+      ],
+      "id": "55f8381f-690d-4c9c-afa2-672ff5c01fbd",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk",
+          "mode": "list",
+          "cachedResultName": "Dr Reyes Appointment Reminder Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.Email }}",
+            "Status": "Cancelled"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reminded",
+              "displayName": "Reminded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        416
+      ],
+      "id": "5b90b707-0d26-4d02-9559-d4eae5d41e38",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk",
+          "mode": "list",
+          "cachedResultName": "Dr Reyes Appointment Reminder Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1a2yyaW4KxG_vN7ODnplB7EWjk_vlbxWgG6025f-ijOk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Edit Fields').item.json.Email }}",
+            "Reminded": "Yes"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reminded",
+              "displayName": "Reminded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        192
+      ],
+      "id": "08083d99-c44d-48e0-8f23-fe81fbf68bd2",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=Dr Reyes Dental Care Appointment Canelled!  \n\nName:{{ $('Get row(s) in sheet').item.json.Name }}\nReason: {{ $('Cancelled').item.json.payload.scheduled_event.cancellation.reason }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        416
+      ],
+      "id": "f429b9e7-1890-4e5a-a4f2-0584291b06db",
+      "name": "Send a text message1",
+      "webhookId": "54457655-e7e2-4fa8-9194-82f3e26dc0a4",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Created": [
+      {
+        "json": {
+          "created_at": "2026-06-02T11:26:44.000000Z",
+          "created_by": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+          "event": "invitee.created",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/d6b5c6e8-fef6-46bd-9203-9d65db3bedee",
+            "created_at": "2026-06-02T11:26:42.416815Z",
+            "email": "jayson.bautista135@gmail.com",
+            "event": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc",
+            "first_name": null,
+            "invitee_scheduled_by": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+            "last_name": null,
+            "name": "Jayson Capa Bautista",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/d6b5c6e8-fef6-46bd-9203-9d65db3bedee",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "created_at": "2026-06-02T11:26:42.402084Z",
+              "end_time": "2026-06-03T14:30:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+                  "user_email": "moneywise.jayson@gmail.com",
+                  "user_name": "KrumaX"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/7a59ee4b-e86b-49eb-af49-662d63187e47",
+              "invitees_counter": {
+                "total": 1,
+                "active": 1,
+                "limit": 1
+              },
+              "location": {
+                "location": "Dr. Reyes St.",
+                "type": "physical"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "Dr Reyes Dental Care",
+              "start_time": "2026-06-03T14:00:00.000000Z",
+              "status": "active",
+              "updated_at": "2026-06-02T11:26:42.402084Z",
+              "uri": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc"
+            },
+            "scheduling_method": "api",
+            "status": "active",
+            "text_reminder_number": null,
+            "timezone": "Asia/Singapore",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2026-06-02T11:26:42.416815Z",
+            "uri": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc/invitees/d6b5c6e8-fef6-46bd-9203-9d65db3bedee"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Cancelled": [
+      {
+        "json": {
+          "created_at": "2026-06-02T11:27:28.000000Z",
+          "created_by": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+          "event": "invitee.canceled",
+          "payload": {
+            "cancel_url": "https://calendly.com/cancellations/d6b5c6e8-fef6-46bd-9203-9d65db3bedee",
+            "cancellation": {
+              "canceled_by": "Jayson Capa Bautista",
+              "canceler_type": "invitee",
+              "created_at": "2026-06-02T11:27:27.804955Z",
+              "reason": "son..."
+            },
+            "created_at": "2026-06-02T11:26:42.416815Z",
+            "email": "jayson.bautista135@gmail.com",
+            "event": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc",
+            "first_name": null,
+            "invitee_scheduled_by": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+            "last_name": null,
+            "name": "Jayson Capa Bautista",
+            "new_invitee": null,
+            "no_show": null,
+            "old_invitee": null,
+            "payment": null,
+            "questions_and_answers": [],
+            "reconfirmation": null,
+            "reschedule_url": "https://calendly.com/reschedulings/d6b5c6e8-fef6-46bd-9203-9d65db3bedee",
+            "rescheduled": false,
+            "routing_form_submission": null,
+            "scheduled_event": {
+              "cancellation": {
+                "canceled_by": "Jayson Capa Bautista",
+                "canceler_type": "invitee",
+                "created_at": "2026-06-02T11:27:27.804955Z",
+                "reason": "son..."
+              },
+              "created_at": "2026-06-02T11:26:42.402084Z",
+              "end_time": "2026-06-03T14:30:00.000000Z",
+              "event_guests": [],
+              "event_memberships": [
+                {
+                  "user": "https://api.calendly.com/users/93f2025a-457a-479d-b8e8-9b64c36bf412",
+                  "user_email": "moneywise.jayson@gmail.com",
+                  "user_name": "KrumaX"
+                }
+              ],
+              "event_type": "https://api.calendly.com/event_types/7a59ee4b-e86b-49eb-af49-662d63187e47",
+              "invitees_counter": {
+                "total": 1,
+                "active": 0,
+                "limit": 1
+              },
+              "location": {
+                "location": "Dr. Reyes St.",
+                "type": "physical"
+              },
+              "meeting_notes_html": null,
+              "meeting_notes_plain": null,
+              "name": "Dr Reyes Dental Care",
+              "start_time": "2026-06-03T14:00:00.000000Z",
+              "status": "canceled",
+              "updated_at": "2026-06-02T11:27:27.819718Z",
+              "uri": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc"
+            },
+            "scheduling_method": "api",
+            "status": "canceled",
+            "text_reminder_number": null,
+            "timezone": "Asia/Singapore",
+            "tracking": {
+              "utm_campaign": null,
+              "utm_source": null,
+              "utm_medium": null,
+              "utm_content": null,
+              "utm_term": null,
+              "salesforce_uuid": null
+            },
+            "updated_at": "2026-06-02T11:27:27.809487Z",
+            "uri": "https://api.calendly.com/scheduled_events/8c8e8e55-7522-4bdd-8e9d-a987c12e09cc/invitees/d6b5c6e8-fef6-46bd-9203-9d65db3bedee"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Created": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelled": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "392f467a-ec0e-4ea5-8801-c5fc2fbbd285",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "cRGN66lkeG6BJZ3Q",
+  "tags": [
+    {
+      "updatedAt": "2026-05-30T11:09:10.666Z",
+      "createdAt": "2026-05-30T11:09:10.666Z",
+      "id": "co1hVMF50UtB5njS",
+      "name": "Beginner"
+    }
+  ]
+}

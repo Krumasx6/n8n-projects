@@ -1,0 +1,198 @@
+{
+  "name": "Appointment Booking & Confirmation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "events": [
+          "invitee.created"
+        ]
+      },
+      "type": "n8n-nodes-base.calendlyTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b87f97c5-ad09-49ed-ace8-a6fbba31a4de",
+      "name": "Calendly Trigger",
+      "webhookId": "c7ea68a9-3ffc-43dd-82de-d25ba105e40a",
+      "credentials": {
+        "calendlyApi": {
+          "id": "rSpYGfRALFzVcCYB",
+          "name": "Calendly account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xA3Kq-l1hVLH7fV49Vi-zCQoc0sdcsKE8SoHX18qBjk",
+          "mode": "list",
+          "cachedResultName": "Physical Therapy Appointment Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xA3Kq-l1hVLH7fV49Vi-zCQoc0sdcsKE8SoHX18qBjk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xA3Kq-l1hVLH7fV49Vi-zCQoc0sdcsKE8SoHX18qBjk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Client Name": "={{ $json.payload.name }}",
+            "Client Email": "={{ $json.payload.email }}",
+            "Time": "={{ $json.payload.scheduled_event.start_time.split('T')[1].split('.')[0] }}",
+            "Date": "={{ $json.payload.scheduled_event.start_time.split('T')[0] }}",
+            "Service": "={{ $json.payload.scheduled_event.name }}",
+            "Location": "={{ $json.payload.scheduled_event.location.location }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Client Email",
+              "displayName": "Client Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service",
+              "displayName": "Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "677e1fb4-666c-4802-a5cc-0749e6235a12",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Bycka3tiQ0lfOLWo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6132121457",
+        "text": "=🚨 **New Booking Confirmed!**\n\n👤 **Client:** {{ $json[\"Client Name\"] }}\n📩 **Email:** {{ $json[\"Client Email\"] }}\n💼 **Service:** {{ $json.Service }}\n📅 **Date:** {{ $json.Date }}\n⏰ **Time:** {{ $json.Time }} GMT\n📍 **Location:** {{ $json.Location }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "ebf4e6cc-91b9-416a-afb0-7b864fc21580",
+      "name": "Send a text message",
+      "webhookId": "7ed9218a-8593-4909-b715-a3965cd7587d",
+      "credentials": {
+        "telegramApi": {
+          "id": "8GECkU8Q10iXoYMS",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Calendly Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "be0f53f1-1762-41da-93fa-f85c60bd2fdb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9ef10f6a375a4169936e48abbdfacae5a3dff7ac5b1256f86d65fc10404c8bb1"
+  },
+  "id": "U77SXb0JW0QH9jwS",
+  "tags": [
+    {
+      "updatedAt": "2026-05-30T11:09:10.666Z",
+      "createdAt": "2026-05-30T11:09:10.666Z",
+      "id": "co1hVMF50UtB5njS",
+      "name": "Beginner"
+    }
+  ]
+}
